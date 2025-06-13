@@ -48,12 +48,12 @@ export default function Home() {
           <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 border-b">
             <div className="container px-4 md:px-6">
               <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-                <div className="flex flex-col justify-center space-y-4">
+                <div className="flex flex-col justify-center space-y-4 min-w-0">
                   <div className="space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                    <h1 className="text-3xl font-bold tracking-tighter leading-tight sm:text-4xl md:text-5xl xl:text-6xl/none break-words">
                       Ship Software with Confidence
                     </h1>
-                    <p className="max-w-[600px] text-muted-foreground md:text-xl">
+                    <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed break-words">
                       Lembos is your internal developer platform built on Kubernetes, GitOps, and Backstage. Accelerate
                       delivery, standardize operations, and empower teams with golden paths.
                     </p>
@@ -67,7 +67,7 @@ export default function Home() {
                     </Button>
                   </div>
                 </div>
-                <div className="flex items-center justify-center mt-8 lg:mt-0">
+                <div className="flex items-center justify-center mt-8 lg:mt-0 min-w-0">
                   <div className="relative w-full max-w-full overflow-hidden rounded-lg border bg-background p-2 shadow-lg">
                     <div className="flex items-center border-b bg-muted/50 px-4 py-2">
                       <div className="flex gap-1">
@@ -76,9 +76,9 @@ export default function Home() {
                         <div className="h-2 w-2 rounded-full bg-green-500"></div>
                       </div>
                     </div>
-                    <div className="overflow-x-auto p-4 font-mono text-sm text-muted-foreground">
+                    <div className="overflow-x-auto p-4 font-mono text-xs sm:text-sm text-muted-foreground">
                     <pre className="w-full">
-                      <code className="grid gap-1">
+                      <code className="grid gap-1 whitespace-pre-wrap break-all sm:break-normal">
                         <span className="text-green-500">$ kubectl</span> get lembos
                         <span className="text-muted">NAME STATUS VERSION AGE</span>
                         <span>app-1 Running v1.2.3 2d</span>
@@ -88,7 +88,7 @@ export default function Home() {
                         <span className="text-primary-light">✓ Resources provisioned</span>
                         <span className="text-primary-light">✓ Deployment successful</span>
                         <span className="text-green-500">Deployment complete! Access your service at:</span>
-                        <span className="text-secondary-main">https://my-service.example.com</span>
+                        <span className="text-secondary-main break-all">https://my-service.example.com</span>
                       </code>
                     </pre>
                     </div>

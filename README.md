@@ -2,4 +2,4 @@
 
 ## Overview
 
-Lembos Portal is built on top of Backstage and provides users with Discovery & Self-Service
+Lembos Landing Page is built with NextJs and Tailwind.

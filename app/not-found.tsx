@@ -5,7 +5,7 @@ import { Terminal } from "lucide-react"
 
 export default function NotFound() {
     return (
-        <div className="flex min-h-screen flex-col">
+        <div className="flex min-h-screen flex-col overflow-x-hidden">
             <main className="flex-1 flex items-center justify-center">
                 <div className="container px-4 md:px-6 py-12 md:py-24 lg:py-32">
                     <div className="flex flex-col items-center justify-center space-y-8 text-center">
@@ -31,7 +31,7 @@ export default function NotFound() {
                                 </div>
                             </div>
                             <div className="overflow-x-auto p-4 font-mono text-sm text-muted-foreground">
-                <pre>
+                <pre className="w-full">
                   <code className="grid gap-1">
                     <span className="text-green-500">$ lembos</span> find --resource=page
                     <span className="text-primary-light">Searching for resource...</span>

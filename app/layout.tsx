@@ -66,7 +66,11 @@ export const metadata: Metadata = {
       url: "/safari-pinned-tab.svg",
       color: "#5bbad5"
     }
-  }
+  },
+  other: {
+      'go-import': 'lembos.dev git https://github.com/lembosproj/lembos',
+      'go-source': 'lembos.dev https://github.com/lembosproj/lembos https://github.com/lembosproj/lembos/tree/main{/dir} https://github.com/lembosproj/lembos/blob/main{/dir}/{file}#L{line}',
+  },
 }
 
 export default function RootLayout({

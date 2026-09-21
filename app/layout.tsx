@@ -1,76 +1,103 @@
 import type React from "react"
-import type { Metadata } from "next"
-import { Inter } from "next/font/google"
+import type { Metadata, Viewport } from "next"
+import { Public_Sans, Roboto } from "next/font/google"
+
 import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
+import { site } from "@/lib/site"
 
-const inter = Inter({ subsets: ["latin"] })
+/* The Portal's pairing: Public Sans for everything, Roboto for the wordmark. */
+const publicSans = Public_Sans({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-public-sans",
+})
+
+const roboto = Roboto({
+  subsets: ["latin"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-roboto",
+})
+
+const title = `${site.name} — ${site.tagline}`
 
 export const metadata: Metadata = {
-  title: "Lembos - Ship Software with Confidence",
-  description: "An Internal Developer Platform (IDP) designed to streamline and enhance the software development lifecycle within organizations.",
-  metadataBase: new URL("https://lembos.dev"),
+  title: {
+    default: title,
+    template: `%s · ${site.name}`,
+  },
+  description: site.description,
+  metadataBase: new URL(site.url),
+  applicationName: site.name,
+  keywords: [
+    "internal developer platform",
+    "IDP",
+    "platform engineering",
+    "developer portal",
+    "software catalog",
+    "progressive delivery",
+    "drift detection",
+    "open source",
+  ],
+  authors: [{ name: "The Lembos Project Owners", url: site.org }],
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://lembos.dev",
-    title: "Lembos - Ship Software with Confidence",
-    description: "An Internal Developer Platform (IDP) designed to streamline and enhance the software development lifecycle within organizations.",
-    siteName: "Lembos",
+    url: site.url,
+    title,
+    description: site.description,
+    siteName: site.name,
     images: [
-        {
-            url: "/og-image.png",
-            width: 1200,
-            height: 630,
-            alt: "Lembos - Internal Developer Platform",
-        },
+      {
+        // Generated from tools/og-image.tsx — see the note in that file.
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: `${site.name} — internal developer platform`,
+      },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Lembos - Ship Software with Confidence",
-    description: "An Internal Developer Platform (IDP) designed to streamline and enhance the software development lifecycle within organizations.",
+    title,
+    description: site.description,
     images: ["/og-image.png"],
   },
   icons: {
     shortcut: "/favicon.ico",
     icon: [
-        {
-          url: "/favicon.png",
-          sizes: "16x16",
-          type: "image/png"
-        },
-        {
-          url: "/favicon-32x32.png",
-          sizes: "32x32",
-          type: "image/png"
-        },
-        {
-          url: "/android-chrome-192x192.png",
-          sizes: "192x192",
-          type: "image/png"
-        },
-        {
-          url: "/android-chrome-512x512.png",
-          sizes: "512x512",
-          type: "image/png"
-        }
+      { url: "/favicon-16x16.png", sizes: "16x16", type: "image/png" },
+      { url: "/favicon-32x32.png", sizes: "32x32", type: "image/png" },
+      { url: "/favicon-96x96.png", sizes: "96x96", type: "image/png" },
+      { url: "/android-chrome-192x192.png", sizes: "192x192", type: "image/png" },
+      { url: "/android-chrome-512x512.png", sizes: "512x512", type: "image/png" },
     ],
     apple: {
       url: "/apple-touch-icon.png",
       sizes: "180x180",
-      type: "image/png"
+      type: "image/png",
     },
     other: {
       rel: "mask-icon",
       url: "/safari-pinned-tab.svg",
-      color: "#5bbad5"
-    }
+      color: "#5B46E5",
+    },
   },
   other: {
-      'go-import': 'lembos.dev git https://github.com/lembosproj/lembos',
-      'go-source': 'lembos.dev https://github.com/lembosproj/lembos https://github.com/lembosproj/lembos/tree/main{/dir} https://github.com/lembosproj/lembos/blob/main{/dir}/{file}#L{line}',
+    "go-import": "lembos.dev git https://github.com/lembosproj/lembos",
+    "go-source":
+      "lembos.dev https://github.com/lembosproj/lembos https://github.com/lembosproj/lembos/tree/main{/dir} https://github.com/lembosproj/lembos/blob/main{/dir}/{file}#L{line}",
   },
+}
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#FAFAFA" },
+    { media: "(prefers-color-scheme: dark)", color: "#0A0A0A" },
+  ],
 }
 
 export default function RootLayout({
@@ -79,12 +106,18 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <head>
-        <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
-      </head>
-      <body className={inter.className}>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+    <html
+      lang="en"
+      suppressHydrationWarning
+      className={`${publicSans.variable} ${roboto.variable}`}
+    >
+      <body className="font-sans">
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
           {children}
         </ThemeProvider>
       </body>

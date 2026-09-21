@@ -1,313 +1,613 @@
 import Link from "next/link"
-import Image from "next/image"
-import { Terminal, Code, GitBranch, Server, Users } from "lucide-react"
+import { ArrowRight } from "lucide-react"
+
 import { Button } from "@/components/ui/button"
-import { ThemeToggle } from "@/components/theme-toggle"
-import { Banner } from "@/components/banner"
-// Import the MobileMenu component at the top of the file
-import { MobileMenu } from "@/components/mobile-menu"
+import { SiteHeader } from "@/components/site/site-header"
+import { WipBanner } from "@/components/site/wip-banner"
+import { SiteFooter } from "@/components/site/site-footer"
+import { GitHubIcon } from "@/components/site/icons"
+import { PortalShot } from "@/components/site/portal-shot"
+import {
+  AuthorizationLayers,
+  ConvergeFigure,
+  RoutingFigure,
+  VersionLadder,
+} from "@/components/site/figures"
+import {
+  Card,
+  Pill,
+  Section,
+  SectionHeading,
+  Term,
+} from "@/components/site/primitives"
+import { site } from "@/lib/site"
+
+const modules = [
+  {
+    name: "Catalog",
+    answers: "What software exists, and how is it related?",
+    holds: ["BusinessDomain", "SoftwareSystem", "Component", "Api", "Resource"],
+  },
+  {
+    name: "Infrastructure",
+    answers: "What is it delivered with?",
+    holds: ["Blueprint", "ExecutionTarget", "Artifact"],
+  },
+  {
+    name: "Delivery",
+    answers: "How does a declaration become running software?",
+    holds: [
+      "InstanceSpec",
+      "Environment",
+      "RuntimeInstance",
+      "Deployment",
+      "Release",
+    ],
+  },
+  {
+    name: "Governance",
+    answers: "Should this happen?",
+    holds: ["Policy", "PolicyVersion", "AuditLog"],
+  },
+  {
+    name: "Organization",
+    answers: "Who is involved, and what may they do?",
+    holds: ["User", "Group", "Role", "Permission"],
+  },
+]
+
+const capabilities = [
+  {
+    title: "Software catalog",
+    body: "Business domains nest into a validated ladder; systems group the components, APIs and resources that form a capability. Purely definitional — declarations, never runtime facts.",
+  },
+  {
+    title: "Configuration management",
+    body: "Immutable, content-hashed revisions pinned per runtime instance, layered system → component → environment → stamp. Secrets referenced by vault path, never carried.",
+  },
+  {
+    title: "Infrastructure orchestration",
+    body: "Blueprints pin their provisioner and source, and are only offered once confirmed fetchable. A version that cannot be retrieved is never handed out and then failed on.",
+  },
+  {
+    title: "Environments and stamps",
+    body: "An environment subdivides into stamps — per country for residency, per region for latency — and the workload declares how many it occupies. Ephemeral ones carry a lease and expire.",
+  },
+  {
+    title: "Progressive delivery",
+    body: "Traffic weights, analysis windows and abort thresholds are blueprint parameters, not control-plane assertions. A promotion names a stamp scope, so a geographic wave is an ordered sequence.",
+  },
+  {
+    title: "Rollback as its own transition",
+    body: "A rollback is a distinct kind of event from deploying an older artifact, because policy has to tell them apart — a rollback frequently bypasses gates a forward deployment must pass.",
+  },
+  {
+    title: "Release provenance",
+    body: "A release freezes its contents when it is ready and records every promotion, so “in which environments was this version tested before production?” has an answer.",
+  },
+  {
+    title: "Policy that can be reconstructed",
+    body: "An evaluation pins the exact policy version it enforced, so a later edit cannot silently rewrite what was applied. Policy is evaluated before dispatch, not audited after it lands.",
+  },
+  {
+    title: "Audit by construction",
+    body: "Every domain event is persisted as an audit entry unconditionally, whether or not anything reacts to it. The trail is a property of the model, not a feature bolted beside it.",
+  },
+]
+
+const journeys = [
+  {
+    role: "A developer",
+    arrives: "“I need this service running in staging.”",
+    does: "Declares the component against a blueprint and names where it belongs. The configuration layers resolve, policy is evaluated, and the work is dispatched.",
+    because:
+      "The blueprint already carries the chart, the traffic weights and the dashboards — none of the runtime has to be learned to use it.",
+  },
+  {
+    role: "A platform engineer",
+    arrives: "“I need to change how every service is deployed.”",
+    does: "Publishes a new blueprint version. Nothing pinned to the old one moves until its owner moves it, and where each version is in force stays visible.",
+    because:
+      "Versions are immutable and pinned, so the golden path can change without a synchronised migration across every team at once.",
+  },
+  {
+    role: "Security and compliance",
+    arrives: "“Show me what was running in production in March.”",
+    does: "Reads the release, the promotions that carried it, and the policy version that was evaluated at the time.",
+    because:
+      "Every domain event is persisted as an audit entry unconditionally, and an evaluation pins the exact policy version it enforced.",
+  },
+]
+
+const scenarios = [
+  {
+    title: "A review environment that cleans itself up",
+    body: "Ephemeral environments carry a lease and a TTL, so a pull-request environment expires on its own instead of accruing cost until someone notices.",
+  },
+  {
+    title: "A payment provider that differs per country",
+    body: "A stamp-layer override, not a reason to fork the component or duplicate the environment. The narrowest layer wins and the rest is shared.",
+  },
+  {
+    title: "A regulated workload that cannot land anywhere",
+    body: "The component requires a capability; only execution targets declaring it are eligible. Policy is evaluated before dispatch, not audited after it lands.",
+  },
+  {
+    title: "Germany before France, with a look in between",
+    body: "A promotion names a stamp scope, so a geographic wave is an ordered sequence of promotions with a human able to check between them.",
+  },
+]
+
+const stack = [
+  { name: ".NET 10", role: "Every service" },
+  { name: "Aspire", role: "Composition and local run" },
+  { name: "HotChocolate", role: "The GraphQL surface" },
+  { name: "Temporal", role: "Durable workflows" },
+  { name: "PostgreSQL", role: "Persistence, via EF Core" },
+  { name: "OpenIddict", role: "Identity and tokens" },
+  { name: "Blazor + MudBlazor", role: "The Portal" },
+  { name: "YARP", role: "The gateway" },
+  { name: "OpenTelemetry", role: "Traces, metrics, logs" },
+  { name: "Redis", role: "Cache and subscriptions" },
+]
 
 export default function Home() {
   return (
-      <div className="flex min-h-screen flex-col overflow-x-hidden">
-        <Banner message="🚧 This site is still under construction. We're working hard to improve it! 🚧" />
-        <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-          <div className="container flex h-16 items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Image src="/logo.svg" alt="Lembos Logo" width={40} height={40} className="h-10 w-10" />
-              <span className="text-xl font-bold">Lembos</span>
-            </div>
-            <nav className="hidden md:flex items-center gap-6">
-              <Link href="#principles" className="text-sm font-medium hover:text-primary-light">
-                Principles
-              </Link>
-              <Link href="#features" className="text-sm font-medium hover:text-primary-light">
-                Features
-              </Link>
-              <Link href="#why" className="text-sm font-medium hover:text-primary-light">
-                Why Lembos
-              </Link>
-            </nav>
-            <div className="flex items-center gap-2 sm:gap-4">
-              <ThemeToggle />
-              <div className="hidden sm:flex items-center gap-2">
-                <Button variant="outline" size="sm" asChild>
-                  <Link href="#docs">View Docs</Link>
+    <div className="flex min-h-screen flex-col">
+      <WipBanner />
+      <SiteHeader />
+
+      <main className="flex-1">
+        {/* ---------------------------------------------------------------- */}
+        {/* Hero                                                              */}
+        {/* ---------------------------------------------------------------- */}
+        <section className="relative overflow-hidden border-b">
+          <div
+            className="grid-backdrop pointer-events-none absolute inset-0"
+            aria-hidden="true"
+          />
+          <div
+            className="brand-glow pointer-events-none absolute inset-x-0 top-0 h-[38rem]"
+            aria-hidden="true"
+          />
+
+          <div className="container relative pb-16 pt-20 md:pb-24 md:pt-28">
+            <div className="mx-auto max-w-3xl text-center">
+              <div className="flex justify-center">
+                <Link
+                  href={site.repo}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group inline-flex max-w-full items-center gap-2 rounded-full border bg-card/80 py-1 pl-1.5 pr-3 text-xs backdrop-blur transition-colors hover:border-foreground/20"
+                >
+                  <Pill tone="primary" className="whitespace-nowrap">
+                    Open source
+                  </Pill>
+                  <span className="whitespace-nowrap text-muted-foreground">
+                    Apache 2.0
+                    <span className="hidden xs:inline">
+                      , and in active development
+                    </span>
+                  </span>
+                  <ArrowRight className="h-3 w-3 shrink-0 text-muted-foreground transition-transform group-hover:translate-x-0.5" />
+                </Link>
+              </div>
+
+              <h1 className="mt-7 text-balance text-4xl font-semibold leading-[1.08] tracking-tight sm:text-5xl md:text-6xl">
+                Know what is running.
+                <br />
+                <span className="text-primary">And what should be.</span>
+              </h1>
+
+              <p className="mx-auto mt-6 max-w-2xl text-pretty text-lg leading-relaxed text-muted-foreground">
+                Lembos is an internal developer platform built on versioned
+                building blocks. It records the software you have and the shape
+                it should take in every environment, observes what is actually
+                there, and closes the gap between the two.
+              </p>
+
+              <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+                <Button size="lg" asChild>
+                  <Link href={site.repo} target="_blank" rel="noopener noreferrer">
+                    <GitHubIcon className="mr-2 h-4 w-4" />
+                    Read the source
+                  </Link>
                 </Button>
-                <Button size="sm" className="bg-primary-dark hover:bg-primary-darker text-white" asChild>
-                  <Link href="#get-started">Get Started</Link>
+                <Button size="lg" variant="outline" asChild>
+                  <Link href="#what-it-is">
+                    See what it does
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
                 </Button>
               </div>
-              {/* Replace the mobile menu button with the MobileMenu component */}
-              <MobileMenu />
+            </div>
+
+            <div className="mx-auto mt-16 max-w-5xl">
+              <PortalShot
+                src="/portal/catalog-light.png"
+                srcDark="/portal/catalog-dark.png"
+                alt="The Lembos Portal listing business domains, each with its type, parent, owner and status."
+                priority
+              />
+              <p className="mt-4 text-center text-sm text-muted-foreground">
+                The Portal, showing the catalog of a sample retailer the platform
+                seeds in development.
+              </p>
             </div>
           </div>
-        </header>
-        <main className="flex-1 overflow-x-hidden">
-          {/* Hero Section */}
-          <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 border-b">
-            <div className="container px-4 md:px-6">
-              <div className="grid gap-8 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-                <div className="flex flex-col justify-center space-y-4 min-w-0">
-                  <div className="space-y-2">
-                    <h1 className="text-3xl font-bold tracking-tighter leading-tight sm:text-4xl md:text-5xl xl:text-6xl/none break-words">
-                      Ship Software with Confidence
-                    </h1>
-                    <p className="text-muted-foreground text-base sm:text-lg md:text-xl leading-relaxed break-words">
-                      Lembos is your internal developer platform built on Kubernetes, GitOps, and Backstage. Accelerate
-                      delivery, standardize operations, and empower teams with golden paths.
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                    <Button className="bg-primary-dark hover:bg-primary-darker text-white" asChild>
-                      <Link href="#get-started">Get Started</Link>
-                    </Button>
-                    <Button variant="outline" asChild>
-                      <Link href="#docs">View Docs</Link>
-                    </Button>
-                  </div>
-                </div>
-                <div className="flex items-center justify-center mt-8 lg:mt-0 min-w-0">
-                  <div className="relative w-full max-w-full overflow-hidden rounded-lg border bg-background p-2 shadow-lg">
-                    <div className="flex items-center border-b bg-muted/50 px-4 py-2">
-                      <div className="flex gap-1">
-                        <div className="h-2 w-2 rounded-full bg-red-500"></div>
-                        <div className="h-2 w-2 rounded-full bg-yellow-500"></div>
-                        <div className="h-2 w-2 rounded-full bg-green-500"></div>
-                      </div>
-                    </div>
-                    <div className="overflow-x-auto p-4 font-mono text-xs sm:text-sm text-muted-foreground">
-                    <pre className="w-full">
-                      <code className="grid gap-1 whitespace-pre-wrap break-all sm:break-normal">
-                        <span className="text-green-500">$ kubectl</span> get lembos
-                        <span className="text-muted">NAME STATUS VERSION AGE</span>
-                        <span>app-1 Running v1.2.3 2d</span>
-                        <span>app-2 Running v1.0.0 5h</span>
-                        <span className="text-green-500">$ lembos</span> deploy --app=my-service
-                        <span className="text-primary-light">✓ Configuration validated</span>
-                        <span className="text-primary-light">✓ Resources provisioned</span>
-                        <span className="text-primary-light">✓ Deployment successful</span>
-                        <span className="text-green-500">Deployment complete! Access your service at:</span>
-                        <span className="text-secondary-main break-all">https://my-service.example.com</span>
-                      </code>
-                    </pre>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </section>
+        </section>
 
-          {/* Core Principles */}
-          <section id="principles" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
-            <div className="container px-4 md:px-6">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Core Principles</h2>
-                  <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    Lembos is built on a foundation of principles that prioritize developer experience and operational
-                    excellence.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 mt-8">
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-4 shadow-sm">
-                  <div className="rounded-full border bg-background p-2.5">
-                    <Code className="h-6 w-6 text-primary-main" />
-                  </div>
-                  <h3 className="text-xl font-bold">Platform as a Product</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Focused on developer experience and user feedback
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-4 shadow-sm">
-                  <div className="rounded-full border bg-background p-2.5">
-                    <GitBranch className="h-6 w-6 text-primary-main" />
-                  </div>
-                  <h3 className="text-xl font-bold">Golden Paths</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Standardized workflows for delivery and infrastructure
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-4 shadow-sm">
-                  <div className="rounded-full border bg-background p-2.5">
-                    <Server className="h-6 w-6 text-primary-main" />
-                  </div>
-                  <h3 className="text-xl font-bold">Developer Self-Service</h3>
-                  <p className="text-sm text-muted-foreground text-center">Autonomous app and environment management</p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-4 shadow-sm">
-                  <div className="rounded-full border bg-background p-2.5">
-                    <Terminal className="h-6 w-6 text-primary-main" />
-                  </div>
-                  <h3 className="text-xl font-bold">Reduced Cognitive Load</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Abstracts away complexity and infra internals
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-4 shadow-sm">
-                  <div className="rounded-full border bg-background p-2.5">
-                    <Users className="h-6 w-6 text-primary-main" />
-                  </div>
-                  <h3 className="text-xl font-bold">Inclusive Collaboration</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Built for dev, ops, and security teams alike
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
+        {/* ---------------------------------------------------------------- */}
+        {/* What it is                                                        */}
+        {/* ---------------------------------------------------------------- */}
+        <Section id="what-it-is">
+          <SectionHeading
+            eyebrow="What it is"
+            title="Not only a portal. Not only a catalog."
+            lead="Lembos is the system that controls how software is deployed, configured and governed. A portal is how people reach it, and a catalog is part of what it knows — neither is the thing itself."
+          />
 
-          {/* Key Features */}
-          <section id="features" className="w-full py-12 md:py-24 lg:py-32">
-            <div className="container px-4 md:px-6">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Key Features</h2>
-                  <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    Lembos provides a comprehensive set of features to streamline your software delivery process.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 mt-8">
-                <div className="flex flex-col space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Application Configuration Management</h3>
-                  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                    <li>Centralized, version-controlled, and secure config storage</li>
-                    <li>Support for environment-specific values and secrets</li>
-                  </ul>
-                </div>
-                <div className="flex flex-col space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Infrastructure Orchestration</h3>
-                  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                    <li>Declarative and automated provisioning</li>
-                    <li>Policy-compliant resource allocation</li>
-                  </ul>
-                </div>
-                <div className="flex flex-col space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Environment Management</h3>
-                  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                    <li>Isolation and lifecycle management for dev/stage/prod</li>
-                    <li>Consistent environment configuration across stages</li>
-                  </ul>
-                </div>
-                <div className="flex flex-col space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Deployment Management</h3>
-                  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                    <li>Automated rollouts with rollback support</li>
-                    <li>Advanced deployment strategies (canary, blue-green)</li>
-                  </ul>
-                </div>
-                <div className="flex flex-col space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Role-Based Access Control</h3>
-                  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                    <li>Fine-grained RBAC with team/org scoping</li>
-                    <li>Comprehensive audit trails for compliance</li>
-                  </ul>
-                </div>
-                <div className="flex flex-col space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Developer Portal</h3>
-                  <ul className="list-disc pl-5 text-sm text-muted-foreground space-y-1">
-                    <li>Service catalog and documentation</li>
-                    <li>Self-service tools and templates</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </section>
+          <div className="mt-12 grid gap-6 md:grid-cols-3">
+            <Card>
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                A catalog says
+              </p>
+              <p className="mt-3 text-lg leading-snug">
+                this component exists, and this team owns it.
+              </p>
+            </Card>
+            <Card>
+              <p className="font-mono text-xs uppercase tracking-wider text-muted-foreground">
+                A pipeline says
+              </p>
+              <p className="mt-3 text-lg leading-snug">
+                this ran, and it exited zero.
+              </p>
+            </Card>
+            <Card className="border-primary/30 bg-primary/[0.04]">
+              <p className="font-mono text-xs uppercase tracking-wider text-primary">
+                Lembos says
+              </p>
+              <p className="mt-3 text-lg leading-snug">
+                this is what should be running here, this is what is, and here is
+                what closes the difference.
+              </p>
+            </Card>
+          </div>
 
-          {/* Why Lembos */}
-          <section id="why" className="w-full py-12 md:py-24 lg:py-32 bg-muted/50">
-            <div className="container px-4 md:px-6">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">Why Lembos?</h2>
-                  <p className="max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    Lembos transforms how your organization builds, deploys, and manages applications.
-                  </p>
-                </div>
-              </div>
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-4 mt-8">
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Increased Efficiency</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Accelerated developer workflows with automated processes and standardized patterns.
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Improved Collaboration</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Unified platform for multiple personas, breaking down silos between teams.
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Enhanced Security</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Central RBAC and policy enforcement ensuring consistent security practices.
-                  </p>
-                </div>
-                <div className="flex flex-col items-center space-y-2 rounded-lg border bg-background p-6 shadow-sm">
-                  <h3 className="text-xl font-bold">Scales With You</h3>
-                  <p className="text-sm text-muted-foreground text-center">
-                    Designed for evolving infrastructure and teams, growing alongside your organization.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* CTA Section */}
-          <section className="w-full py-12 md:py-24 lg:py-32 bg-gradient-burst text-white">
-            <div className="container px-4 md:px-6">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                <div className="space-y-2">
-                  <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                    Ready to streamline software delivery?
-                  </h2>
-                  <p className="max-w-[900px] text-white/90 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                    Join the growing community of teams using Lembos to accelerate their development workflows.
-                  </p>
-                </div>
-                <div className="flex flex-col gap-2 sm:flex-row justify-center">
-                  <Button size="lg" className="bg-white text-primary-dark hover:text-foreground hover:bg-primary/90 group-[.destructive]:hover:border-destructive/30" asChild>
-                    <Link href="https://github.com/lembosproj" target="_blank" rel="noopener noreferrer">
-                      <div className="flex items-center gap-2">
-                        <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                          <path d="M12 2C6.477 2 2 6.477 2 12c0 4.42 2.865 8.166 6.839 9.489.5.092.682-.217.682-.482 0-.237-.008-.866-.013-1.7-2.782.603-3.369-1.342-3.369-1.342-.454-1.155-1.11-1.462-1.11-1.462-.908-.62.069-.608.069-.608 1.003.07 1.531 1.03 1.531 1.03.892 1.529 2.341 1.087 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.11-4.555-4.943 0-1.091.39-1.984 1.029-2.683-.103-.253-.446-1.27.098-2.647 0 0 .84-.269 2.75 1.025A9.578 9.578 0 0112 6.836c.85.004 1.705.114 2.504.336 1.909-1.294 2.747-1.025 2.747-1.025.546 1.377.202 2.394.1 2.647.64.699 1.028 1.592 1.028 2.683 0 3.842-2.339 4.687-4.566 4.935.359.309.678.919.678 1.852 0 1.336-.012 2.415-.012 2.743 0 .267.18.578.688.48C19.138 20.161 22 16.418 22 12c0-5.523-4.477-10-10-10z" />
-                        </svg>
-                        Check it out on GitHub
-                      </div>
-                    </Link>
-                  </Button>
-                  <Button size="lg" variant="outline" className="border-white text-secondary-main hover:text-white hover:bg-primary-darker">
-                    Join Community
-                  </Button>
-                  <Button size="lg" variant="outline" className="border-white text-secondary-main hover:text-white hover:bg-primary-darker">
-                    Read the Docs
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </section>
-        </main>
-        <footer className="w-full border-t py-6 md:py-0">
-          <div className="container flex flex-col items-center justify-between gap-4 py-4 md:h-16 md:flex-row md:py-0">
-            <p className="text-sm text-muted-foreground">
-              &copy; {new Date().getFullYear()} Lembos. All rights reserved.
+          <div className="mt-12 rounded-xl border bg-background-gray p-6 md:p-8">
+            <p className="text-pretty leading-relaxed text-muted-foreground">
+              <span className="text-foreground">
+                The catalog is purely definitional.
+              </span>{" "}
+              It holds declarations and never runtime facts. That boundary is
+              what lets one component run a different version in every place it
+              runs, with the per-environment truth living on a runtime instance
+              instead of forcing the catalog to describe every case.
             </p>
-            <div className="flex gap-4">
-              <Link href="#" className="text-sm text-muted-foreground hover:underline">
-                Terms
-              </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:underline">
-                Privacy
-              </Link>
-              <Link href="#" className="text-sm text-muted-foreground hover:underline">
-                Contact
-              </Link>
+          </div>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Versioned building blocks                                         */}
+        {/* ---------------------------------------------------------------- */}
+        <Section className="bg-background-gray">
+          <div className="grid gap-12 lg:grid-cols-2 lg:items-center lg:gap-16">
+            <div>
+              <SectionHeading
+                eyebrow="The idea underneath"
+                title="Every building block is an entity plus immutable revisions"
+                lead="The entity is what everything names. The revision is what a deployment pins. Blueprints, configuration, API contracts, policies and environments all work this way, which is what makes the rest of the platform expressible rather than aspirational."
+              />
+
+              <dl className="mt-10 space-y-6">
+                <Term name="Reproducibility">
+                  A published revision cannot change under anything pinned to it,
+                  so replaying a deployment a month later produces the same
+                  result.
+                </Term>
+                <Term name="Divergence on purpose">
+                  Staging a version ahead, a canary stamp on a newer artifact, a
+                  region on an older blueprint — environments differing{" "}
+                  <em>is</em> progressive delivery, not a failure to converge.
+                </Term>
+                <Term name="One question, one answer">
+                  “Which version is in effect here” means the same thing whether
+                  the block is a blueprint, a configuration, an API contract, a
+                  policy or a workload declaration.
+                </Term>
+              </dl>
+            </div>
+
+            <div>
+              <VersionLadder />
+              <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                One status machine across every versioned thing. Draft is part of
+                it, so everything has somewhere to sit before it is live — and a
+                version whose artifact cannot be fetched is never handed out.
+              </p>
             </div>
           </div>
-        </footer>
-      </div>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Convergence                                                       */}
+        {/* ---------------------------------------------------------------- */}
+        <Section>
+          <SectionHeading
+            eyebrow="Convergence"
+            title="Lembos converges rather than merely deploys"
+            lead="Recording current state alone answers “what is running” but not “is that what we asked for” — which is precisely the question when a configuration was published and never deployed, a rollout half-completed, or someone edited a cluster by hand."
+          />
+
+          <div className="mt-12">
+            <ConvergeFigure />
+          </div>
+
+          <p className="mt-8 max-w-3xl text-pretty leading-relaxed text-muted-foreground">
+            Every building block records both what should be running and what is.
+            The difference between the two is drift, and closing it is the work.
+            Automated deployment is one way to close it. Reconciliation, rollback
+            and progressive rollout are others.
+          </p>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* The model                                                         */}
+        {/* ---------------------------------------------------------------- */}
+        <Section id="model" className="bg-background-gray">
+          <SectionHeading
+            eyebrow="The model"
+            title="Five modules, each an invariant boundary"
+            lead="Aggregates inside a module enforce rules over each other. Anything across a boundary is referenced rather than navigated to. Read them in order: what software exists, what it is delivered with, how it gets there, whether it may, and who is involved."
+          />
+
+          <div className="mt-12 grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {modules.map((module) => (
+              <Card key={module.name} className="flex flex-col">
+                <h3 className="text-lg font-semibold">{module.name}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {module.answers}
+                </p>
+                <div className="mt-4 flex flex-wrap gap-1.5 pt-1">
+                  {module.holds.map((aggregate) => (
+                    <span
+                      key={aggregate}
+                      className="rounded border px-1.5 py-0.5 font-mono text-[11px] text-muted-foreground"
+                    >
+                      {aggregate}
+                    </span>
+                  ))}
+                </div>
+              </Card>
+            ))}
+
+            <Card className="flex flex-col justify-between border-dashed">
+              <div>
+                <h3 className="text-lg font-semibold">The whole model</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  Aggregates, lifecycles, behaviours and the events they raise —
+                  documented per module and kept current with the code.
+                </p>
+              </div>
+              <Link
+                href={`${site.repo}/tree/main/docs/domain`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-4 inline-flex items-center text-sm font-medium text-primary hover:underline"
+              >
+                Read the domain docs
+                <ArrowRight className="ml-1.5 h-3.5 w-3.5" />
+              </Link>
+            </Card>
+          </div>
+
+          <div className="mt-14 grid gap-10 lg:grid-cols-[1fr_1.15fr] lg:items-center">
+            <div>
+              <h3 className="text-2xl font-semibold tracking-tight">
+                Typed by contract, not by label
+              </h3>
+              <p className="mt-4 text-pretty leading-relaxed text-muted-foreground">
+                A component or resource declares the blueprint that defines it,
+                so “what is this thing” resolves to a shape the platform can act
+                on rather than a string someone typed. What each entity provides,
+                consumes and depends on is held as references, so the graph can
+                be traversed without loading half the catalog.
+              </p>
+            </div>
+            <PortalShot
+              src="/portal/component-light.png"
+              srcDark="/portal/component-dark.png"
+              alt="A component page in the Portal showing its blueprint, owner and a relations graph of what it consumes and depends on."
+            />
+          </div>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Capabilities                                                      */}
+        {/* ---------------------------------------------------------------- */}
+        <Section id="capabilities">
+          <SectionHeading
+            eyebrow="Capabilities"
+            title="What the platform carries"
+            lead="Each of these is a feature of the model rather than an integration sitting beside it."
+          />
+
+          <div className="mt-12 grid gap-px overflow-hidden rounded-xl border bg-border md:grid-cols-2 lg:grid-cols-3">
+            {capabilities.map((capability) => (
+              <div key={capability.title} className="bg-card p-6">
+                <h3 className="font-semibold">{capability.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {capability.body}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-8 text-sm text-muted-foreground">
+            Feature by feature, each mapped to the module that carries it —{" "}
+            <Link
+              href={`${site.repo}/blob/main/docs/features.md`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-primary hover:underline"
+            >
+              What Lembos does
+            </Link>
+            .
+          </p>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* Governance                                                        */}
+        {/* ---------------------------------------------------------------- */}
+        <Section className="bg-background-gray">
+          <SectionHeading
+            eyebrow="Guardrails"
+            title="Access control is three layers, not one"
+            lead="Each answers a different question, and collapsing them into one mechanism fails whichever mechanism is chosen. RBAC alone cannot express “production is restricted to a few people while anyone may create a dev environment”."
+          />
+
+          <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:gap-12">
+            <AuthorizationLayers />
+
+            <div>
+              <h3 className="text-xl font-semibold tracking-tight">
+                And work only routes where it can run
+              </h3>
+              <p className="mt-3 text-pretty leading-relaxed text-muted-foreground">
+                Execution targets declare capabilities, and intent is matched
+                against them before anything is dispatched. Adding a runtime
+                surface means adding a target, not changing orchestration logic.
+              </p>
+              <div className="mt-6">
+                <RoutingFigure />
+              </div>
+            </div>
+          </div>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* How it is used                                                    */}
+        {/* ---------------------------------------------------------------- */}
+        <Section id="how-it-is-used">
+          <SectionHeading
+            eyebrow="How it is used"
+            title="Three people, one system of record"
+            lead="Lembos is adopted by a whole engineering organisation rather than by one team, because the three questions below are usually answered by three different systems that disagree with each other."
+          />
+
+          <div className="mt-12 grid gap-4 lg:grid-cols-3">
+            {journeys.map((journey) => (
+              <Card key={journey.role} className="flex flex-col">
+                <h3 className="font-semibold">{journey.role}</h3>
+                <p className="mt-3 text-pretty leading-snug text-foreground/90">
+                  {journey.arrives}
+                </p>
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {journey.does}
+                </p>
+                <p className="mt-auto border-t pt-4 text-sm leading-relaxed text-muted-foreground">
+                  <span className="text-foreground">Because </span>
+                  {journey.because}
+                </p>
+              </Card>
+            ))}
+          </div>
+
+          <h3 className="mt-16 text-2xl font-semibold tracking-tight">
+            What that looks like in practice
+          </h3>
+
+          <div className="mt-6 grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2">
+            {scenarios.map((scenario) => (
+              <div key={scenario.title} className="bg-card p-6">
+                <h4 className="font-medium">{scenario.title}</h4>
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">
+                  {scenario.body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* What you operate                                                  */}
+        {/* ---------------------------------------------------------------- */}
+        <Section id="built-with">
+          <SectionHeading
+            eyebrow="What you operate"
+            title="A platform you run yourself"
+            lead="There is no hosted Lembos. It is one .NET solution composed by Aspire — an orchestrator behind a single GraphQL endpoint, an identity server, a worker running durable workflows, and the Portal — provisioning into execution targets you own."
+          />
+
+          <div className="mt-12 grid gap-px overflow-hidden rounded-xl border bg-border sm:grid-cols-2 lg:grid-cols-5">
+            {stack.map((item) => (
+              <div key={item.name} className="bg-card px-5 py-4">
+                <p className="font-medium">{item.name}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{item.role}</p>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-8 max-w-3xl text-pretty leading-relaxed text-muted-foreground">
+            Running it today means running the solution itself — the repository
+            covers that. A packaged install, the chart that turns this into a
+            platform your organisation operates, is still ahead of it, and the
+            configuration is already shaped for it.
+          </p>
+        </Section>
+
+        {/* ---------------------------------------------------------------- */}
+        {/* CTA                                                               */}
+        {/* ---------------------------------------------------------------- */}
+        <section className="relative overflow-hidden border-b">
+          <div
+            className="brand-glow pointer-events-none absolute inset-0"
+            aria-hidden="true"
+          />
+          <div className="container relative py-20 text-center md:py-28">
+            <h2 className="text-balance text-3xl font-semibold tracking-tight md:text-4xl">
+              The reasoning is in the open too
+            </h2>
+            <p className="mx-auto mt-4 max-w-2xl text-pretty leading-relaxed text-muted-foreground">
+              Decision records state why the architecture is the way it is, one
+              document per decision. Enhancement proposals hold the changes not
+              yet decided. Both are in the repository, and both take comments.
+            </p>
+
+            <div className="mt-9 flex flex-col justify-center gap-3 sm:flex-row">
+              <Button size="lg" asChild>
+                <Link href={site.repo} target="_blank" rel="noopener noreferrer">
+                  <GitHubIcon className="mr-2 h-4 w-4" />
+                  lembosproj/platform
+                </Link>
+              </Button>
+              <Button size="lg" variant="outline" asChild>
+                <Link
+                  href={`${site.repo}/tree/main/docs/architecture-decisions`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  Read the decision records
+                </Link>
+              </Button>
+            </div>
+
+            <p className="mt-8 text-sm text-muted-foreground">
+              Questions, or interested in contributing?{" "}
+              <Link
+                href={`mailto:${site.email}`}
+                className="text-primary hover:underline"
+              >
+                {site.email}
+              </Link>
+            </p>
+          </div>
+        </section>
+      </main>
+
+      <SiteFooter />
+    </div>
   )
 }

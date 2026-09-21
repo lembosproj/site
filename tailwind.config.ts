@@ -6,45 +6,60 @@ const config = {
     "./pages/**/*.{ts,tsx}",
     "./components/**/*.{ts,tsx}",
     "./app/**/*.{ts,tsx}",
+    "./content/**/*.{md,mdx}",
     "./src/**/*.{ts,tsx}",
-    "*.{js,ts,jsx,tsx,mdx}",
   ],
   prefix: "",
   theme: {
     container: {
       center: true,
-      padding: "2rem",
+      padding: {
+        DEFAULT: "1.5rem",
+        lg: "2rem",
+      },
       screens: {
-        "2xl": "1400px",
+        "2xl": "1200px",
       },
     },
     extend: {
+      screens: {
+        xs: "420px",
+      },
+      fontFamily: {
+        // Public Sans for everything, Roboto for the wordmark — the pairing the
+        // Portal already uses.
+        sans: ["var(--font-public-sans)", "system-ui", "sans-serif"],
+        brand: ["var(--font-roboto)", "Roboto", "Arial", "sans-serif"],
+        mono: [
+          "ui-monospace",
+          "SFMono-Regular",
+          "Menlo",
+          "Consolas",
+          "monospace",
+        ],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
+        "background-gray": "hsl(var(--background-gray))",
         foreground: "hsl(var(--foreground))",
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
-          light: "#9d4edd", // French Violet
-          main: "#7b2cbf", // French Violet darker
-          dark: "#5a189a", // Persian Indigo
-          darker: "#3c096c", // Persian Indigo darker
-          darkest: "#240046", // Russian Violet
-          deepest: "#10002b", // Russian Violet darker
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
           foreground: "hsl(var(--secondary-foreground))",
-          light: "#e0aaff", // Mauve
-          main: "#c77dff", // Heliotrope
         },
         destructive: {
           DEFAULT: "hsl(var(--destructive))",
           foreground: "hsl(var(--destructive-foreground))",
         },
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        info: "hsl(var(--info))",
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
@@ -61,32 +76,6 @@ const config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        status: {
-          ok: {
-            light: "#1DB954",
-            dark: "#71CF88",
-          },
-          warning: {
-            light: "#FF9800",
-            dark: "#FFB84D",
-          },
-          error: {
-            light: "#E22134",
-            dark: "#F84C55",
-          },
-          running: {
-            light: "#5a189a",
-            dark: "#7b2cbf",
-          },
-          pending: {
-            light: "#FFED51",
-            dark: "#FEF071",
-          },
-          aborted: {
-            light: "#757575",
-            dark: "#9E9E9E",
-          },
-        },
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -102,13 +91,15 @@ const config = {
           from: { height: "var(--radix-accordion-content-height)" },
           to: { height: "0" },
         },
+        "fade-up": {
+          from: { opacity: "0", transform: "translateY(12px)" },
+          to: { opacity: "1", transform: "translateY(0)" },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
-      },
-      backgroundImage: {
-        "gradient-burst": "linear-gradient(-137deg, #9d4edd 0%, #5a189a 100%)",
+        "fade-up": "fade-up 0.5s ease-out both",
       },
     },
   },
